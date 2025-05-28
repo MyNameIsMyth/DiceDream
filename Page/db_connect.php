@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "root";
+$password = "Und_ofg";
 $dbname = "shop_db";
 
 try {
