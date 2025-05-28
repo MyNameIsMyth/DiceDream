@@ -1,0 +1,468 @@
+body{
+    background-color: #F5F9E4;
+}
+.content-container {
+    display: flex; /* Размещаем прямоугольник и кнопки в одной строке */
+    align-items: flex-start; /* Выравниваем элементы по верхнему краю */
+  }
+  
+  .rectangle {
+    width: 710px;
+    height: 540px;
+    background-color: #F9FBEF;
+    margin-top: 50px; /* Отступ сверху */
+    margin-left: 240px; /* Отступ слева */
+  }
+  
+  /* Стили для загрузки аватарки */
+.avatar-upload {
+    position: absolute;
+    top: 20px; /* Отступ сверху внутри прямоугольника */
+    left: 20px; /* Отступ слева внутри прямоугольника */
+  }
+  
+  .avatar-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Делаем круг */
+    background-color: #ccc; /* Цвет фона */
+    cursor: pointer; /* Курсор в виде указателя */
+    overflow: hidden; /* Обрезаем изображение, если оно выходит за границы */
+    border: 2px solid #fff; /* Белая рамка */
+  }
+  
+  .avatar-label span {
+    font-size: 24px;
+    color: #fff; /* Цвет плейсхолдера */
+  }
+  
+  .avatar-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Изображение заполняет круг */
+  }
+  
+  /* Стили для маленьких прямоугольников */
+  .small-rectangles-container {
+    position: absolute;
+    top: 140px; /* Отступ сверху от аватарки */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translateX(-50%); /* Смещаем на половину ширины */
+    display: flex;
+    gap: 10px; /* Отступ между прямоугольниками */
+  }
+  
+  .small-rectangle {
+    width: 223px;
+    height: 50px;
+    background-color: #CACCC1; /* Новый цвет */
+    border: 1px solid #ccc; /* Граница */
+    border-radius: 8px; /* Закругленные углы */
+  }
+  
+  /* Стили для кнопок под прямоугольниками */
+  .buttons-below-container {
+    position: absolute;
+    top: 210px; /* Отступ сверху от маленьких прямоугольников */
+    left: 50%; /* Центрируем по горизонтали */
+    transform: translateX(-50%); /* Смещаем на половину ширины */
+    display: flex;
+    flex-direction: column; /* Располагаем кнопки в столбик */
+    gap: 10px; /* Отступ между кнопками */
+  }
+  
+  .large-button {
+    width: 446px;
+    height: 50px;
+    background-color: #CACCC1; /* Новый цвет */
+    border: 1px solid #ccc; /* Граница */
+    border-radius: 8px; /* Закругленные углы */
+    font-size: 16px; /* Размер текста */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s ease; /* Плавное изменение фона */
+  }
+  
+  .large-button:hover {
+    background-color: #b0b2a7; /* Изменение фона при наведении */
+  }
+  
+  /* Стили для кнопок справа от прямоугольника */
+  .buttons-right-container {
+    position: absolute;
+    top: 270px; /* Опускаем на 100px вниз (было 90px, стало 190px) */
+    left: 970px; /* Отступ слева от основного прямоугольника */
+    display: flex;
+    gap: 10px; /* Отступ между кнопками */
+  }
+  
+  .profile-button {
+    width: 233px; /* Ширина кнопки */
+    height: 50px; /* Высота кнопки */
+    background-color: #CACCC1; /* Новый цвет */
+    border: 1px solid #ccc; /* Граница */
+    border-radius: 8px; /* Закругленные углы */
+    font-size: 16px; /* Размер текста */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s ease; /* Плавное изменение фона */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none; /* Убираем подчеркивание у ссылки */
+    color: inherit; /* Наследуем цвет текста */
+  }
+  
+  .profile-button:hover {
+    background-color: #b0b2a7; /* Изменение фона при наведении */
+  }
+  @import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  background-color: #F5F9E4;
+}
+
+.header {
+  background-color: #000A02;
+  padding: 20px;
+  color: white;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center; 
+  justify-content: space-between;
+}
+
+.more-link-container
+{
+  display: flex;
+  margin-left: 1550px;
+}
+
+.more-link
+{
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+}
+
+.logo {
+  max-width: 150px; 
+  height: 50px; 
+  left: 220px;
+  position: relative;
+}
+
+.nav {
+  background-color: #CACCC1;
+}
+
+.nav ul {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 10px 0;
+  flex-wrap: wrap; 
+}
+
+.nav ul li {
+  margin: 0 15px;
+}
+
+.nav ul li a {
+  text-decoration: none;
+  color: #000A02;
+  font-weight: bold;
+  padding: 10px 20px; 
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+.nav ul li a:hover {
+  background-color: #000A02;
+  color: #F5F9E4;
+}
+
+.slider-container {
+  width: 78%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.slider-image {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+}
+
+
+.slick-dots {
+  position: absolute;
+  bottom: 20px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.slick-dots li {
+  margin: 0 5px;
+}
+
+.slick-dots li button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ccc; 
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.slick-dots li.slick-active button {
+  background-color: #000; 
+  opacity: 1;
+}
+
+
+.slick-prev,
+.slick-next {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5); 
+  border-radius: 50%;
+  z-index: 1;
+  transition: background-color 0.3s;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  background-color: rgba(0, 0, 0, 0.8); 
+}
+
+.slick-prev::before,
+.slick-next::before {
+  font-family: 'Arial', sans-serif; 
+  font-size: 24px;
+  color: white; 
+  opacity: 1;
+}
+
+.slick-prev {
+  left: 20px; 
+}
+
+.slick-next {
+  right: 20px;
+}
+
+.slick-prev::before {
+  content: '←'; 
+}
+
+.slick-next::before {
+  content: '→'; 
+}
+
+.button-container {
+  display: flex;
+  gap: 10px; 
+  position: relative;
+  right: 210px;
+}
+
+.icon-button {
+  background-color: transparent; 
+  border: none; 
+  cursor: pointer; 
+  padding: 10px; 
+  transition: transform 0.2s; 
+}
+
+.icon-button:hover {
+  transform: scale(1.1); 
+}
+
+.icon-button img {
+  width: 24px; 
+  height: 24px; 
+}
+
+.h1-new
+{
+  position: relative;
+  right: 665px;
+  margin-top: 30px;
+  font-family: 'Literata';
+}
+
+
+.about-section {
+  text-align: left;
+  margin: 40px auto;
+  max-width: 1500px;
+  padding: 0 20px;
+}
+
+.about-section h1 {
+  font-family: 'Literata', serif;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #000A02;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.about-image {
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.about-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  max-width: 600px;
+}
+
+.container-carder {
+  display: flex;
+  justify-content: space-around; 
+  align-items: center; 
+  flex-wrap: wrap; 
+  padding: 5px 145px;
+  border-radius: 8px; 
+  margin: 10px 0; 
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 200px; 
+}
+
+.card-item img {
+  width: 250px; 
+  height: 250px;
+  margin-bottom: 15px; 
+  border-radius: 8px; 
+}
+
+.card-item p {
+  font-size: 18px; 
+  color: #333;
+  margin: 0; 
+  font-weight: 500; 
+}
+.footer {
+    background-color: #000000;
+    color: white;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    font-family: 'Arial', sans-serif;
+    height: 500px;
+    padding-left: 210px;
+    
+}
+
+.footer-logo {
+    flex: 1;
+    max-width: 200px;
+    margin-right: 20px;
+    text-align: center;
+}
+
+.footer-logo img {
+    width: 100%;
+    height: auto;
+}
+
+.footer-logo p {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer-content {
+    flex: 2;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.footer-section {
+    margin: 10px;
+    min-width: 150px;
+}
+
+.footer-section h4 {
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-qr {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.qr-code {
+    text-align: center;
+    position: absolute;
+    transform: translate(-80%, 100%);
+}
+
+
+
+.qr-code img {
+    width: 600px;
+}
+

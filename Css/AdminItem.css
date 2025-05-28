@@ -1,0 +1,173 @@
+body {
+  background-color: #CACCC1;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-item-header {
+  background-color: #B5B5B5;
+  color: white;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-item-nav-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-item-nav-item {
+  margin-right: 20px;
+}
+
+.admin-item-nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 10px 15px;
+  transition: background-color 0.3s ease;
+}
+
+.admin-item-nav-link:hover {
+  background-color: #555;
+  border-radius: 5px;
+}
+
+/* Основной контейнер для контента */
+.admin-item-content-container {
+  display: flex;
+  margin-left: 150px;
+  gap: 20px;
+  height: calc(100vh - 100px); /* Высота контейнера равна высоте экрана минус высота шапки */
+}
+
+/* Стили для первого контейнера (830x750px) */
+.admin-item-data-container {
+  width: 830px;
+  height: 100%; /* Занимает всю доступную высоту */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow: auto; /* Добавляем скролл, если содержимое выходит за пределы */
+}
+
+/* Стили для шапки таблицы */
+.admin-item-table-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.admin-item-header-item {
+  flex: 1;
+  text-align: center;
+}
+
+/* Стили для второго контейнера (460x750px) */
+.admin-item-side-container {
+  width: 480px;
+  height: 100%; /* Занимает всю доступную высоту */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Надпись "Добавить товар" */
+.admin-item-side-container-title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+
+/* Квадрат для отображения картинки */
+.admin-item-image-preview {
+  width: 200px;
+  height: 200px;
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Кнопка для загрузки картинки */
+.admin-item-upload-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.admin-item-upload-button:hover {
+  background-color: #0056b3;
+}
+
+/* Группа инпутов */
+.admin-item-input-group {
+  width: 85%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Стили для инпутов */
+.admin-item-input-field {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Стили для текстового поля (textarea) */
+.admin-item-textarea-field {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Кнопка "Сохранить" */
+.admin-item-save-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+}
+
+.admin-item-save-button:hover {
+  background-color: #218838;
+}
+
+/* Стили для изображения в preview */
+.admin-item-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+}

@@ -1,0 +1,63 @@
+body {
+  background-color: #CACCC1;
+}
+
+.admin-user-header {
+  background-color: #B5B5B5;
+  color: white;
+  height: 100px; /* Высота шапки */
+  display: flex;
+  align-items: center; /* Центрирование по вертикали */
+  justify-content: center; /* Центрирование по горизонтали */
+}
+
+.admin-user-nav-list {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-user-nav-item {
+  margin-right: 20px;
+}
+
+.admin-user-nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 10px 15px; /* Добавим отступы для лучшего вида */
+  transition: background-color 0.3s ease; /* Плавный эффект при наведении */
+}
+
+.admin-user-nav-link:hover {
+  background-color: #555; /* Изменение фона при наведении */
+  border-radius: 5px; /* Скругление углов */
+}
+
+/* Стили для контейнера базы данных */
+.admin-user-data-container {
+  width: 1200px;
+  height: 750px;
+  margin: 20px auto; /* Центрирование контейнера */
+  background-color: #fff; /* Белый фон */
+  border: 1px solid #ddd; /* Граница */
+  border-radius: 8px; /* Скругление углов */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
+  padding: 20px; /* Внутренние отступы */
+}
+
+/* Стили для шапки таблицы */
+.admin-user-table-header {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f5f5f5; /* Светлый фон */
+  padding: 10px;
+  border-bottom: 2px solid #ddd; /* Граница снизу */
+  font-weight: bold; /* Жирный текст */
+}
+
+.admin-user-header-item {
+  flex: 1; /* Равномерное распределение пространства */
+  text-align: center; /* Центрирование текста */
+}

@@ -1,0 +1,408 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  background-color: #F5F9E4;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #000A02;
+  padding: 20px;
+  color: white;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-input {
+  width: 500px;
+  padding: 10px;
+  font-size: 16px;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  transition: transform 0.2s;
+}
+
+.icon-button:hover {
+  transform: scale(1.1);
+}
+
+.icon-button img {
+  width: 24px;
+  height: 24px;
+}
+
+.nav {
+  background-color: #CACCC1;
+}
+
+.nav ul {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+.nav ul li {
+  margin: 0 15px;
+}
+
+.nav ul li a {
+  text-decoration: none;
+  color: #000A02;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.nav ul li a:hover {
+  background-color: #000A02;
+  color: #F5F9E4;
+}
+
+.slider-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+}
+
+.slider-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.slick-dots {
+  position: absolute;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.slick-dots li {
+  margin: 0 5px;
+}
+
+.slick-dots li button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ccc;
+  border: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.slick-dots li.slick-active button {
+  background-color: #000;
+  opacity: 1;
+}
+
+.slick-prev,
+.slick-next {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  z-index: 1;
+  transition: background-color 0.3s;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.slick-prev::before,
+.slick-next::before {
+  font-family: 'Arial', sans-serif;
+  font-size: 24px;
+  color: white;
+  opacity: 1;
+}
+
+.slick-prev {
+  left: 20px;
+}
+
+.slick-next {
+  right: 20px;
+}
+
+.slick-prev::before {
+  content: '←';
+}
+
+.slick-next::before {
+  content: '→';
+}
+
+.more-link-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.more-link {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+}
+
+.arrow-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.new-products {
+  padding: 2rem;
+  background-color: white;
+  margin-top: 2rem;
+}
+
+.h1-new {
+  font-family: 'Literata', serif;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #000A02;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.about-section {
+  text-align: left;
+  margin: 40px auto;
+  max-width: 1500px;
+  padding: 0 20px;
+}
+
+.about-section h1 {
+  font-family: 'Literata', serif;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #000A02;
+}
+
+.about-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.about-image {
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.about-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  max-width: 600px;
+}
+
+.container-carder {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 5px 145px;
+  border-radius: 8px;
+  margin: 10px 0;
+  gap: 10px;
+}
+
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 343px;
+}
+
+.card-item img {
+  width: 343px;
+  height: 299px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.card-item p {
+  font-size: 18px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo img {
+  max-width: 150px;
+  height: auto;
+}
+
+.footer-content {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-section {
+  flex-basis: 30%;
+}
+
+.footer-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer-section ul li a {
+  text-decoration: none;
+  color: white;
+}
+
+.footer-qr {
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav ul li {
+    margin: 10px 0;
+  }
+
+  .slider-container {
+    width: 100%;
+    height: 400px;
+  }
+
+  .about-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .about-image {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .container-carder {
+    padding: 10px;
+  }
+
+  .card-item {
+    margin-bottom: 20px;
+  }
+
+  .card-item img {
+    width: 100%;
+    height: auto;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-section {
+    flex-basis: 100%;
+  }
+
+  .footer-qr {
+    order: 3;
+    margin-top: 20px;
+  }
+}
+
+/* Планшеты и большие экраны */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .nav ul li {
+    margin: 0 10px;
+  }
+
+  .slider-container {
+    width: 100%;
+    height: 500px;
+  }
+
+  .about-content {
+    flex-direction: row;
+  }
+
+  .about-image {
+    max-width: 300px;
+  }
+}
+
+/* Большие экраны */
+@media (min-width: 1025px) {
+  .slider-container {
+    width: 100%;
+    height: 600px;
+  }
+
+  .about-content {
+    flex-direction: row;
+  }
+
+  .about-image {
+    max-width: 400px;
+  }
+}
