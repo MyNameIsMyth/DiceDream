@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background-color: #f5f7fa;
+    background-color: #F5F9E4;
     color: #2c3e50;
     line-height: 1.5;
 }
@@ -89,7 +89,7 @@ body {
     opacity: 1;
 }
 
-.search-icon {
+.search-button img {
     width: 20px;
     height: 20px;
     filter: invert(1);
@@ -181,8 +181,8 @@ body {
 }
 
 .sidebar-link.active {
-    background: #e5f6ff;
-    color: #0ea5e9;
+    background: #f1f2ef;
+    color: #9B9E8E;
     font-weight: 500;
 }
 
@@ -335,7 +335,7 @@ body {
 .add-to-cart-button {
     width: 100%;
     padding: 0.75rem;
-    background: #10b981;
+    background: #9B9E8E;
     color: white;
     border: none;
     font-size: 0.875rem;
@@ -345,11 +345,11 @@ body {
 }
 
 .add-to-cart-button:hover {
-    background: #059669;
+    background: #7F8173;
 }
 
 .add-to-cart-button.added {
-    background: #059669;
+    background: #9B9E8E;
 }
 
 /* Empty state */
@@ -382,8 +382,8 @@ body {
 .reset-filters {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background: #e5f6ff;
-    color: #0ea5e9;
+    background: #f1f2ef;
+    color: #9B9E8E;
     text-decoration: none;
     border-radius: 6px;
     font-weight: 500;
@@ -391,7 +391,7 @@ body {
 }
 
 .reset-filters:hover {
-    background: #0ea5e9;
+    background: #9B9E8E;
     color: white;
 }
 
@@ -438,86 +438,94 @@ body {
 .footer {
     background-color: #000A02;
     color: white;
-    padding: 4rem 2rem;
-    margin-top: 4rem;
-}
-
-.footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 4rem;
-    align-items: start;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    font-family: 'Arial', sans-serif;
+    height: 500px;
+    padding-left: 210px;
 }
 
 .footer-logo {
-    flex-shrink: 0;
-}
-
-.footer-logo img {
-    height: 50px;
-    width: auto;
-    margin-bottom: 1rem;
-}
-
-.footer-sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-}
-
-.footer-section {
-    margin-bottom: 1.5rem;
-}
-
-.footer-section h4 {
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid rgba(255,255,255,0.1);
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section ul li a {
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-    display: inline-block;
-    padding: 0.25rem 0;
-}
-
-.footer-section ul li a:hover {
-    color: white;
-    transform: translateX(5px);
-}
-
-.footer-qr {
+    flex: 1;
+    max-width: 200px;
+    margin-right: 20px;
     text-align: center;
 }
 
+.footer-logo img {
+    width: 100%;
+    height: auto;
+}
+
+.footer-logo p {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.footer-content {
+    flex: 2;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.footer-section {
+    margin: 10px;
+    min-width: 150px;
+}
+
+.footer-section h4 {
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-qr {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    height: 100%;
+}
+
 .qr-code {
-    background: white;
-    padding: 1rem;
-    border-radius: 12px;
-    display: inline-block;
+    position: absolute;
+    bottom: -50px;
+    right: 450px;
+    text-align: center;
+    background: transparent;
+    z-index: 10;
 }
 
 .qr-code img {
-    width: 150px;
-    height: auto;
+    width: 575px;
+    height: 235px;
+    object-fit: contain;
+    background: transparent;
     display: block;
 }
 

@@ -400,7 +400,7 @@ try {
                            placeholder="Поиск настольных игр..." 
                            value="<?php echo htmlspecialchars($search); ?>" />
                     <button type="submit" class="search-button">
-                        <img src="../Media/search-icon.png" alt="Поиск" class="search-icon">
+                        <img src="../Media/search.png" alt="Поиск">
                     </button>
                 </div>
             </form>
@@ -528,42 +528,39 @@ try {
     </div>
 
     <footer class="footer">
+        <div class="footer-logo">
+            <img src="/Media/logo.png" alt="логотип"/>
+        </div>
         <div class="footer-content">
-            <div class="footer-logo">
-                <img src="../Media/logo.png" alt="DiceDream" />
+            <div class="footer-section">
+                <h4>Страницы</h4>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/Page/catalog.php">Каталог</a></li>
+                    <li><a href="/Page/busket.php">Корзина</a></li>
+                    <li><a href="/Page/fav.php">Избранное</a></li>
+                    <li><a href="/Page/personal.php">Профиль</a></li>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                </ul>
             </div>
-            <div class="footer-sections">
-                <div class="footer-section">
-                    <h4>Страницы</h4>
-                    <ul>
-                        <li><a href="../index.php">Главная</a></li>
-                        <li><a href="catalog.php">Каталог</a></li>
-                        <li><a href="busket.php">Корзина</a></li>
-                        <li><a href="fav.php">Избранное</a></li>
-                        <li><a href="personal.php">Профиль</a></li>
-                        <li><a href="#">Доставка</a></li>
-                        <li><a href="#">Заказы</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Услуги</h4>
-                    <ul>
-                        <li><a href="#">Доставка</a></li>
-                        <li><a href="#">Служба поддержки</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Документация</h4>
-                    <ul>
-                        <li><a href="#">Условия доставки</a></li>
-                        <li><a href="#">Условия хранения</a></li>
-                    </ul>
-                </div>
+            <div class="footer-section">
+                <h4>Услуги</h4>
+                <ul>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                    <li><a href="/Page/support.php">Служба поддержки</a></li>
+                </ul>
             </div>
-            <div class="footer-qr">
-                <div class="qr-code">
-                    <img src="../Media/qr-code.png" alt="QR-код" />
-                </div>
+            <div class="footer-section">
+                <h4>Документация</h4>
+                <ul>
+                    <li><a href="/Page/delivery-terms.php">Условия доставки</a></li>
+                    <li><a href="/Page/storage-terms.php">Условия хранения</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-qr">
+            <div class="qr-code">
+                <img src="/Media/qr.png" alt="QR Код"/>
             </div>
         </div>
     </footer>

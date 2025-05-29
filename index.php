@@ -23,6 +23,14 @@ function getProductImage($imgPath, $itemName) {
     return 'default.jpg';
 }
 
+// Получаем избранные товары пользователя
+$favorites = [];
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT idItem FROM Favorites WHERE idUser = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $favorites = $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
 // Получаем категории
 try {
     $stmt = $conn->query("SELECT * FROM Category");
@@ -92,6 +100,7 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Главная - Настольные игры</title>
     <link rel="stylesheet" href="Css/style.css">
     <link rel="stylesheet" href="Css/catalog.css">
+    <link rel="stylesheet" href="Css/footer.css">
 </head>
 <body>
     <!-- Header -->
@@ -105,7 +114,7 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <input type="text" name="search" class="search-input" 
                            placeholder="Поиск настольных игр..." />
                     <button type="submit" class="search-button">
-                        <img src="Media/search-icon.png" alt="Поиск" class="search-icon">
+                        <img src="Media/search.png" alt="Поиск">
                     </button>
                 </div>
             </form>
@@ -263,6 +272,13 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php if (isset($item['Limitation'])): ?>
                                     <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
                                 <?php endif; ?>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <button class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
+                                            onclick="event.preventDefault(); toggleFavorite(<?php echo $item['idItem']; ?>, this)"
+                                            title="<?php echo in_array($item['idItem'], $favorites) ? 'Удалить из избранного' : 'Добавить в избранное'; ?>">
+                                        <?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
@@ -304,6 +320,13 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                      alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
                                      class="product-image">
                                 <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <button class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
+                                            onclick="event.preventDefault(); toggleFavorite(<?php echo $item['idItem']; ?>, this)"
+                                            title="<?php echo in_array($item['idItem'], $favorites) ? 'Удалить из избранного' : 'Добавить в избранное'; ?>">
+                                        <?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
@@ -314,9 +337,13 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
                             </div>
                         </a>
-                        <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
-                            В корзину
-                        </button>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                                В корзину
+                            </button>
+                        <?php else: ?>
+                            <a href="Page/vhod.php" class="add-to-cart-button">Войти для покупки</a>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -337,6 +364,13 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                      alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
                                      class="product-image">
                                 <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <button class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
+                                            onclick="event.preventDefault(); toggleFavorite(<?php echo $item['idItem']; ?>, this)"
+                                            title="<?php echo in_array($item['idItem'], $favorites) ? 'Удалить из избранного' : 'Добавить в избранное'; ?>">
+                                        <?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?>
+                                    </button>
+                                <?php endif; ?>
                             </div>
                             <div class="product-info">
                                 <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
@@ -347,9 +381,13 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
                             </div>
                         </a>
-                        <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
-                            В корзину
-                        </button>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                                В корзину
+                            </button>
+                        <?php else: ?>
+                            <a href="Page/vhod.php" class="add-to-cart-button">Войти для покупки</a>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -390,47 +428,39 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-logo">
+            <img src="/Media/logo.png" alt="логотип"/>
+        </div>
         <div class="footer-content">
-            <div class="footer-logo">
-                <a href="index.php">
-                    <img src="Media/logo.png" alt="DiceDream" />
-                </a>
+            <div class="footer-section">
+                <h4>Страницы</h4>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/Page/catalog.php">Каталог</a></li>
+                    <li><a href="/Page/busket.php">Корзина</a></li>
+                    <li><a href="/Page/fav.php">Избранное</a></li>
+                    <li><a href="/Page/personal.php">Профиль</a></li>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                </ul>
             </div>
-            <div class="footer-sections">
-                <div class="footer-section">
-                    <h4>Навигация</h4>
-                    <ul>
-                        <li><a href="index.php">Главная</a></li>
-                        <li><a href="Page/catalog.php">Каталог</a></li>
-                        <li><a href="Page/busket.php">Корзина</a></li>
-                        <li><a href="Page/fav.php">Избранное</a></li>
-                        <li><a href="Page/personal.php">Личный кабинет</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Покупателям</h4>
-                    <ul>
-                        <li><a href="#">Доставка и оплата</a></li>
-                        <li><a href="#">Возврат товара</a></li>
-                        <li><a href="#">Бонусная программа</a></li>
-                        <li><a href="#">Подарочные сертификаты</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Информация</h4>
-                    <ul>
-                        <li><a href="#">О компании</a></li>
-                        <li><a href="#">Контакты</a></li>
-                        <li><a href="#">Условия использования</a></li>
-                        <li><a href="#">Политика конфиденциальности</a></li>
-                    </ul>
-                </div>
+            <div class="footer-section">
+                <h4>Услуги</h4>
+                <ul>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                    <li><a href="/Page/support.php">Служба поддержки</a></li>
+                </ul>
             </div>
-            <div class="footer-qr">
-                <div class="qr-code">
-                    <img src="Media/qr-code.png" alt="QR-код для скачивания приложения" />
-                    <p class="qr-text">Скачайте наше приложение</p>
-                </div>
+            <div class="footer-section">
+                <h4>Документация</h4>
+                <ul>
+                    <li><a href="/Page/delivery-terms.php">Условия доставки</a></li>
+                    <li><a href="/Page/storage-terms.php">Условия хранения</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-qr">
+            <div class="qr-code">
+                <img src="/Media/qr.png" alt="QR Код"/>
             </div>
         </div>
     </footer>

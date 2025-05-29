@@ -30,8 +30,13 @@ $selectedCategory = isset($_GET['category']) ? $_GET['category'] : null;
             <img src="/Media/logo.png" alt="Логотип" class="logo"/>
         </a>
         <div class="search-container">
-            <input class="search-input" placeholder="Поиск по названию, описанию или категории" type="text"/>
-            <div class="search-results"></div>
+            <div class="search-wrapper">
+                <input class="search-input" placeholder="Поиск по названию, описанию или категории" type="text"/>
+                <button type="submit" class="search-button">
+                    <img src="/Media/search.png" alt="Поиск">
+                </button>
+                <div class="search-results"></div>
+            </div>
         </div>
         <div class="button-container">
             <a href="/Page/vhod.php" class="icon-button">

@@ -32,6 +32,7 @@ try {
     <title>Избранное - DiceDream</title>
     <link rel="stylesheet" href="../Css/style.css">
     <link rel="stylesheet" href="../Css/catalog.css">
+    <link rel="stylesheet" href="../Css/footer.css">
 </head>
 <body>
     <!-- Header -->
@@ -45,7 +46,7 @@ try {
                     <input type="text" name="search" class="search-input" 
                            placeholder="Поиск настольных игр..." />
                     <button type="submit" class="search-button">
-                        <img src="../Media/search-icon.png" alt="Поиск" class="search-icon">
+                        <img src="../Media/search.png" alt="Поиск">
                     </button>
                 </div>
             </form>
@@ -116,47 +117,39 @@ try {
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-logo">
+            <img src="/Media/logo.png" alt="логотип"/>
+        </div>
         <div class="footer-content">
-            <div class="footer-logo">
-                <a href="../index.php">
-                    <img src="../Media/logo.png" alt="DiceDream" />
-                </a>
+            <div class="footer-section">
+                <h4>Страницы</h4>
+                <ul>
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="/Page/catalog.php">Каталог</a></li>
+                    <li><a href="/Page/busket.php">Корзина</a></li>
+                    <li><a href="/Page/fav.php">Избранное</a></li>
+                    <li><a href="/Page/personal.php">Профиль</a></li>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                </ul>
             </div>
-            <div class="footer-sections">
-                <div class="footer-section">
-                    <h4>Навигация</h4>
-                    <ul>
-                        <li><a href="../index.php">Главная</a></li>
-                        <li><a href="catalog.php">Каталог</a></li>
-                        <li><a href="busket.php">Корзина</a></li>
-                        <li><a href="fav.php">Избранное</a></li>
-                        <li><a href="personal.php">Личный кабинет</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Покупателям</h4>
-                    <ul>
-                        <li><a href="#">Доставка и оплата</a></li>
-                        <li><a href="#">Возврат товара</a></li>
-                        <li><a href="#">Бонусная программа</a></li>
-                        <li><a href="#">Подарочные сертификаты</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Информация</h4>
-                    <ul>
-                        <li><a href="#">О компании</a></li>
-                        <li><a href="#">Контакты</a></li>
-                        <li><a href="#">Условия использования</a></li>
-                        <li><a href="#">Политика конфиденциальности</a></li>
-                    </ul>
-                </div>
+            <div class="footer-section">
+                <h4>Услуги</h4>
+                <ul>
+                    <li><a href="/Page/delivery.php">Доставка</a></li>
+                    <li><a href="/Page/support.php">Служба поддержки</a></li>
+                </ul>
             </div>
-            <div class="footer-qr">
-                <div class="qr-code">
-                    <img src="../Media/qr-code.png" alt="QR-код для скачивания приложения" />
-                    <p class="qr-text">Скачайте наше приложение</p>
-                </div>
+            <div class="footer-section">
+                <h4>Документация</h4>
+                <ul>
+                    <li><a href="/Page/delivery-terms.php">Условия доставки</a></li>
+                    <li><a href="/Page/storage-terms.php">Условия хранения</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-qr">
+            <div class="qr-code">
+                <img src="/Media/qr.png" alt="QR Код"/>
             </div>
         </div>
     </footer>

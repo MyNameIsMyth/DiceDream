@@ -24,6 +24,9 @@ $pageTitle = 'Личный кабинет';
 include 'template/header_personal.php';
 ?>
 
+<link rel="stylesheet" href="/Css/footer.css">
+<link rel="stylesheet" href="/Css/catalog.css">
+
 <style>
     .personal-container {
         max-width: 1200px;
@@ -130,24 +133,44 @@ include 'template/header_personal.php';
 
     .action-button {
         display: inline-block;
-        background: #007bff;
+        background: #CACCC1;
         color: white;
         padding: 10px 20px;
         border-radius: 6px;
         text-decoration: none;
         margin-top: 15px;
         transition: background-color 0.3s;
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        border: none !important;
     }
 
     .action-button:hover {
-        background: #0056b3;
+        background: #b8baa9;
+        transform: translateY(-2px);
+    }
+
+    .action-button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+    }
+
+    .action-button:active {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
     }
 
     .logout-button {
         background: #dc3545;
         border: none;
         color: white;
-        padding: 12px 24px;
+        padding: 14px 28px;
         border-radius: 6px;
         cursor: pointer;
         font-size: 16px;
@@ -156,6 +179,17 @@ include 'template/header_personal.php';
 
     .logout-button:hover {
         background: #c82333;
+    }
+
+    .admin-button {
+        background-color: #dc3545 !important;
+        color: white !important;
+        transition: all 0.3s ease;
+    }
+
+    .admin-button:hover {
+        background-color: #c82333 !important;
+        transform: translateY(-2px);
     }
 
     /* Модальное окно */
@@ -306,18 +340,18 @@ include 'template/header_personal.php';
             <button onclick="openEditModal()" class="action-button">Изменить настройки</button>
         </div>
 
-        <?php if (isset($_SESSION['admin']) && $_SESSION['admin'] === true): ?>
+        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
         <div class="profile-card">
             <div class="card-header">
                 <div class="card-icon">
-                    <img src="../Media/admin-icon.png" alt="Админ"/>
+                    <img src="../Media/icon1.png" alt="Админ панель"/>
                 </div>
-                <div class="card-title">Панель администратора</div>
+                <div class="card-title">Админ панель</div>
             </div>
             <div class="card-content">
-                Управление магазином и пользователями
+                Управление товарами, пользователями и заказами
             </div>
-            <a href="admin.php" class="action-button">Перейти в админку</a>
+            <a href="AdminItem.php" class="action-button admin-button">Войти в админ панель</a>
         </div>
         <?php endif; ?>
     </div>
@@ -361,7 +395,7 @@ include 'template/header_personal.php';
 <!-- Footer -->
 <footer class="footer">
     <div class="footer-logo">
-        <img src="../Media/logo.png" alt="логотип"/>
+        <img src="/Media/logo.png" alt="логотип"/>
     </div>
     <div class="footer-content">
         <div class="footer-section">
@@ -392,7 +426,7 @@ include 'template/header_personal.php';
     </div>
     <div class="footer-qr">
         <div class="qr-code">
-            <img src="../Media/qr.png" alt="QR Код"/>
+            <img src="/Media/qr.png" alt="QR Код"/>
         </div>
     </div>
 </footer>
@@ -435,3 +469,6 @@ include 'template/header_personal.php';
         }
     });
 </script>
+
+</body>
+</html>
