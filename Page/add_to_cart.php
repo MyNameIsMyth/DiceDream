@@ -2,41 +2,47 @@
 session_start();
 require_once 'db_connect.php';
 
+header('Content-Type: application/json');
+
 // Проверяем авторизацию
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Необходимо войти в систему']);
+    echo json_encode(['success' => false, 'message' => 'Необходимо авторизоваться']);
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id'])) {
-    $userId = $_SESSION['user_id'];
-    $itemId = $_POST['item_id'];
-    
-    try {
-        // Проверяем, есть ли уже такой товар в корзине
-        $stmt = $conn->prepare("SELECT * FROM Cart WHERE idUser = ? AND idItem = ?");
-        $stmt->execute([$userId, $itemId]);
-        
-        if ($stmt->rowCount() > 0) {
-            // Если товар уже есть, увеличиваем количество
-            $stmt = $conn->prepare("UPDATE Cart SET quantity = quantity + 1 WHERE idUser = ? AND idItem = ?");
-            $stmt->execute([$userId, $itemId]);
-        } else {
-            // Если товара нет, добавляем новую запись
-            $stmt = $conn->prepare("INSERT INTO Cart (idUser, idItem, quantity) VALUES (?, ?, 1)");
-            $stmt->execute([$userId, $itemId]);
+// Проверяем наличие ID товара
+if (!isset($_POST['idItem'])) {
+    echo json_encode(['success' => false, 'message' => 'ID товара не указан']);
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
+$itemId = (int)$_POST['idItem'];
+
+try {
+    // Проверяем наличие товара в корзине
+    $stmt = $conn->prepare("SELECT quantity FROM Cart WHERE idUser = ? AND idItem = ?");
+    $stmt->execute([$userId, $itemId]);
+    $cartItem = $stmt->fetch();
+
+    if ($cartItem) {
+        // Если товар уже есть в корзине, увеличиваем количество на 1
+        $newQuantity = $cartItem['quantity'] + 1;
+        if ($newQuantity > 99) {
+            echo json_encode(['success' => false, 'message' => 'Достигнуто максимальное количество товара']);
+            exit();
         }
         
-        // Получаем общее количество товаров в корзине
-        $stmt = $conn->prepare("SELECT SUM(quantity) as total FROM Cart WHERE idUser = ?");
-        $stmt->execute([$userId]);
-        $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-        
-        echo json_encode(['success' => true, 'message' => 'Товар добавлен в корзину', 'total' => $total]);
-    } catch(PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Ошибка при добавлении товара: ' . $e->getMessage()]);
+        $stmt = $conn->prepare("UPDATE Cart SET quantity = ? WHERE idUser = ? AND idItem = ?");
+        $stmt->execute([$newQuantity, $userId, $itemId]);
+    } else {
+        // Если товара нет в корзине, добавляем его с количеством 1
+        $stmt = $conn->prepare("INSERT INTO Cart (idUser, idItem, quantity) VALUES (?, ?, 1)");
+        $stmt->execute([$userId, $itemId]);
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Неверный запрос']);
+
+    echo json_encode(['success' => true, 'message' => 'Товар добавлен в корзину']);
+} catch(PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Ошибка при добавлении в корзину']);
 }
 ?> 

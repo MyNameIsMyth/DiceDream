@@ -2,6 +2,37 @@
 session_start();
 require_once 'db_connect.php';
 
+// Функция для получения случайного изображения из папки Media
+function getProductImage($itemName) {
+    $imagePath = "../Media/" . $itemName . ".png";
+    
+    // Список доступных изображений
+    $availableImages = [
+        'Бункер.png',
+        'Глумхевен.png',
+        'Дюна.png',
+        'Зомбоцид.png',
+        'Книга.png',
+        'Котята.png',
+        'Мемы.png',
+        'Осворн.png',
+        'Пёсики.png',
+        'Свинтус.png',
+        'Уно.png',
+        'Эверделл.png',
+        'Аркхэм.png',
+        '500 карт.png'
+    ];
+
+    // Проверяем существует ли файл
+    if (file_exists($imagePath)) {
+        return $itemName . ".png";
+    } else {
+        // Если файл не существует, выбираем случайное изображение
+        return $availableImages[array_rand($availableImages)];
+    }
+}
+
 // Параметры сортировки и фильтрации
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
 $category = isset($_GET['category']) ? (int)$_GET['category'] : 0;
@@ -80,8 +111,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Каталог</title>
-    <link rel="stylesheet" href="..\Css\catalog.css">
+    <title>Каталог настольных игр - DiceDream</title>
+    <link rel="stylesheet" href="../Css/catalog.css">
     <style>
         .catalog-container {
             display: grid;
@@ -357,25 +388,33 @@ try {
 <body>
 <div class="App">
     <header class="header">
-        <a href="../index.php">
-            <img src="../Media/logo.png" alt="Логотип" class="logo"/>
-        </a>
-        <form class="search-form" method="GET">
-            <input type="text" name="search" class="search-input" 
-                   placeholder="Поиск товаров..." 
-                   value="<?php echo htmlspecialchars($search); ?>" />
-            <button type="submit" class="search-button">Найти</button>
-        </form>
-        <div class="button-container">
-            <a href="personal.php" class="icon-button">
-                <img alt="user" src="../Media/icon1.png" />
+        <div class="header-content">
+            <a href="../index.php" class="logo-link">
+                <img src="../Media/logo.png" alt="DiceDream" class="logo"/>
             </a>
-            <a href="fav.php" class="icon-button">
-                <img alt="love" src="../Media/icon2.png" />
-            </a>
-            <a href="busket.php" class="icon-button">
-                <img alt="store" src="../Media/icon3.png" />
-            </a>
+            <form class="search-form" method="GET">
+                <div class="search-wrapper">
+                    <input type="text" 
+                           name="search" 
+                           class="search-input" 
+                           placeholder="Поиск настольных игр..." 
+                           value="<?php echo htmlspecialchars($search); ?>" />
+                    <button type="submit" class="search-button">
+                        <img src="../Media/search-icon.png" alt="Поиск" class="search-icon">
+                    </button>
+                </div>
+            </form>
+            <div class="header-actions">
+                <a href="personal.php" class="icon-button" title="Личный кабинет">
+                    <img alt="Профиль" src="../Media/icon1.png" />
+                </a>
+                <a href="fav.php" class="icon-button" title="Избранное">
+                    <img alt="Избранное" src="../Media/icon2.png" />
+                </a>
+                <a href="busket.php" class="icon-button" title="Корзина">
+                    <img alt="Корзина" src="../Media/icon3.png" />
+                </a>
+            </div>
         </div>
     </header>
 
@@ -384,6 +423,11 @@ try {
             <div class="sidebar-section">
                 <h3 class="sidebar-title">Категории</h3>
                 <ul class="sidebar-list">
+                    <li class="sidebar-item">
+                        <a href="?category=0" class="sidebar-link <?php echo !$category ? 'active' : ''; ?>">
+                            Все игры
+                        </a>
+                    </li>
                     <?php foreach ($categories as $cat): ?>
                         <li class="sidebar-item">
                             <a href="?category=<?php echo $cat['idCategory']; ?>" 
@@ -399,13 +443,18 @@ try {
                 <h3 class="sidebar-title">Сортировка</h3>
                 <ul class="sidebar-list">
                     <li class="sidebar-item">
+                        <a href="?sort=popularity" class="sidebar-link <?php echo $sort === 'popularity' ? 'active' : ''; ?>">
+                            По популярности
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
                         <a href="?sort=price_asc" class="sidebar-link <?php echo $sort === 'price_asc' ? 'active' : ''; ?>">
-                            По возрастанию цены
+                            Сначала дешевле
                         </a>
                     </li>
                     <li class="sidebar-item">
                         <a href="?sort=price_desc" class="sidebar-link <?php echo $sort === 'price_desc' ? 'active' : ''; ?>">
-                            По убыванию цены
+                            Сначала дороже
                         </a>
                     </li>
                     <li class="sidebar-item">
@@ -413,85 +462,103 @@ try {
                             По названию (А-Я)
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a href="?sort=popularity" class="sidebar-link <?php echo $sort === 'popularity' ? 'active' : ''; ?>">
-                            По популярности
-                        </a>
-                    </li>
                 </ul>
             </div>
         </aside>
 
-        <main>
-            <div class="new-product-grid">
+        <main class="catalog-main">
+            <?php if (!empty($search)): ?>
+                <div class="search-results">
+                    <h2>Результаты поиска: "<?php echo htmlspecialchars($search); ?>"</h2>
+                    <?php if (empty($items)): ?>
+                        <p>По вашему запросу ничего не найдено</p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
+            <div class="product-grid">
                 <?php if (empty($items)): ?>
                     <div class="empty-result">
+                        <img src="../Media/empty-results.png" alt="Ничего не найдено" class="empty-icon">
                         <h2>Товары не найдены</h2>
                         <p>Попробуйте изменить параметры поиска или фильтрации</p>
+                        <a href="?category=0" class="reset-filters">Сбросить все фильтры</a>
                     </div>
                 <?php else: ?>
                     <?php foreach ($items as $item): ?>
-                        <div class="new-product-card" data-item-id="<?php echo $item['idItem']; ?>">
+                        <div class="product-card">
                             <div class="product-image-container">
+                                <img src="../Media/<?php echo getProductImage($item['ItemName']); ?>" 
+                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                     class="product-image">
                                 <?php if (isset($_SESSION['user_id'])): ?>
-                                    <button class="favorite-button" onclick="toggleFavorite(<?php echo $item['idItem']; ?>, this)">
-                                        <img src="../Media/<?php echo in_array($item['idItem'], $favorites) ? 'icon2.png' : 'icon2.png'; ?>" 
-                                             alt="<?php echo in_array($item['idItem'], $favorites) ? 'В избранном' : 'Добавить в избранное'; ?>" />
+                                    <button class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
+                                            onclick="toggleFavorite(<?php echo $item['idItem']; ?>, this)">
+                                        <?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?>
                                     </button>
                                 <?php endif; ?>
-                                <img src="../Media/<?php echo htmlspecialchars($item['ItemName']); ?>.png" 
-                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" />
                             </div>
-                            <div class="new-product-content">
-                                <div class="product-category"><?php echo htmlspecialchars($item['nameCategory'] ?? 'Без категории'); ?></div>
+                            <div class="product-info">
                                 <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
-                                <div class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</div>
-                                <button class="new-basket-button" onclick="addToCart(<?php echo $item['idItem']; ?>)">
-                                    <img src="../Media/store-icon.png" alt="" />
-                                    В корзину
-                                </button>
+                                <div class="product-meta">
+                                    <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                    <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                                </div>
+                                <div class="product-details">
+                                    <span class="product-time"><?php echo htmlspecialchars($item['GameTime']); ?> мин</span>
+                                    <span class="product-age"><?php echo htmlspecialchars($item['Limitation']); ?>+</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price"><?php echo number_format($item['Price'], 0, ',', ' '); ?> ₽</span>
+                                </div>
                             </div>
+                            <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                                В корзину
+                            </button>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </main>
     </div>
+
     <footer class="footer">
-        <div class="footer-logo">
-            <img src="./images/Используются везде/logo.png" alt="logofooter" />
-        </div>
         <div class="footer-content">
-            <div class="footer-section">
-                <h4>Страницы</h4>
-                <ul>
-                    <li><a href="#">Главная</a></li>
-                    <li><a href="#">Каталог</a></li>
-                    <li><a href="#">Корзина</a></li>
-                    <li><a href="#">Избранное</a></li>
-                    <li><a href="#">Профиль</a></li>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Покупки</a></li>
-                </ul>
+            <div class="footer-logo">
+                <img src="../Media/logo.png" alt="DiceDream" />
             </div>
-            <div class="footer-section">
-                <h4>Услуги</h4>
-                <ul>
-                    <li><a href="#">Доставка</a></li>
-                    <li><a href="#">Служба поддержки</a></li>
-                </ul>
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>Страницы</h4>
+                    <ul>
+                        <li><a href="../index.php">Главная</a></li>
+                        <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="busket.php">Корзина</a></li>
+                        <li><a href="fav.php">Избранное</a></li>
+                        <li><a href="personal.php">Профиль</a></li>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Заказы</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Услуги</h4>
+                    <ul>
+                        <li><a href="#">Доставка</a></li>
+                        <li><a href="#">Служба поддержки</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Документация</h4>
+                    <ul>
+                        <li><a href="#">Условия доставки</a></li>
+                        <li><a href="#">Условия хранения</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Документация</h4>
-                <ul>
-                    <li><a href="#">Условия доставки</a></li>
-                    <li><a href="#">Условия хранения</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-qr">
-            <div class="qr-code">
-                <img src="./images/Используются везде/qr-code.png" alt="QR Code" />
+            <div class="footer-qr">
+                <div class="qr-code">
+                    <img src="../Media/qr-code.png" alt="QR-код" />
+                </div>
             </div>
         </div>
     </footer>
@@ -523,25 +590,29 @@ try {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `item_id=${itemId}`
+            body: 'idItem=' + itemId
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const img = button.querySelector('img');
-                if (data.action === 'added') {
-                    img.src = '../Media/icon2.png';
-                    img.alt = 'В избранном';
+                if (data.isFavorite) {
+                    button.textContent = '❤️';
+                    button.classList.add('active');
                 } else {
-                    img.src = '../Media/icon2.png';
-                    img.alt = 'Добавить в избранное';
+                    button.textContent = '🤍';
+                    button.classList.remove('active');
                 }
+            } else {
+                alert(data.message || 'Произошла ошибка');
             }
         })
-        .catch(error => console.error('Ошибка:', error));
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при обновлении избранного');
+        });
     }
 
-    function addToCart(itemId) {
+    function addToCart(itemId, button) {
         <?php if (!isset($_SESSION['user_id'])): ?>
             window.location.href = 'vhod.php';
             return;
@@ -552,17 +623,40 @@ try {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `item_id=${itemId}&quantity=1`
+            body: 'idItem=' + itemId
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Товар добавлен в корзину');
+                button.classList.add('added');
+                button.textContent = 'В корзине';
+                
+                // Обновляем счетчик в корзине
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount) {
+                    let count = parseInt(cartCount.textContent || '0');
+                    cartCount.textContent = count + 1;
+                    cartCount.style.display = 'block';
+                } else {
+                    const cartIcon = document.querySelector('a[href="busket.php"]');
+                    const newCount = document.createElement('span');
+                    newCount.className = 'cart-count';
+                    newCount.textContent = '1';
+                    cartIcon.appendChild(newCount);
+                }
+
+                setTimeout(() => {
+                    button.classList.remove('added');
+                    button.textContent = 'В корзину';
+                }, 2000);
             } else {
                 alert(data.message || 'Произошла ошибка');
             }
         })
-        .catch(error => console.error('Ошибка:', error));
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при добавлении в корзину');
+        });
     }
 </script>
 </body>

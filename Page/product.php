@@ -45,7 +45,11 @@
                 <h1>Бункер</h1>
                 <div class="product-details">
                     <div class="product-info">
-                        <img src="./images/product-images/bunker.png" alt="Бункер" class="product-image" />
+                        <div class="product-image-container">
+                            <img src="../Media/<?php echo getProductImage($item['ItemName']); ?>" 
+                                 alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                 class="product-image">
+                        </div>
                         <div class="product-details-column">
                             <div class="age-category">18+</div>
                             <div class="game-type">

@@ -74,55 +74,48 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная - Настольные игры</title>
     <link rel="stylesheet" href="Css/style.css">
+    <link rel="stylesheet" href="Css/catalog.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <a href="index.php">
-            <img src="Media/logo.png" alt="Логотип" class="logo"/>
-        </a>
-        <div class="search-container">
-            <input class="search-input" placeholder="Поиск по названию, описанию или категории" type="text"/>
-            <div class="search-results"></div>
-        </div>
-        <div class="button-container">
-            <a href="Page/vhod.php" class="icon-button">
-                <img alt="Пользователь" src="Media/icon1.png"/>
+        <div class="header-content">
+            <a href="index.php" class="logo-link">
+                <img src="Media/logo.png" alt="Логотип" class="logo"/>
             </a>
-            <a href="Page/fav.php" class="icon-button">
-                <img alt="Любимые" src="Media/icon2.png"/>
-            </a>
-            <a href="Page/busket.php" class="icon-button">
-                <img alt="Корзина" src="Media/icon3.png"/>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <?php
-                    $userId = $_SESSION['user_id'];
-                    $stmt = $conn->prepare("SELECT SUM(quantity) as total FROM Cart WHERE idUser = ?");
-                    $stmt->execute([$userId]);
-                    $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
-                    if ($total > 0):
-                    ?>
-                        <span class="cart-count"><?php echo $total; ?></span>
+            <form action="Page/catalog.php" method="GET" class="search-form">
+                <div class="search-wrapper">
+                    <input type="text" name="search" class="search-input" 
+                           placeholder="Поиск настольных игр..." />
+                    <button type="submit" class="search-button">
+                        <img src="Media/search-icon.png" alt="Поиск" class="search-icon">
+                    </button>
+                </div>
+            </form>
+            <div class="header-actions">
+                <a href="Page/personal.php" class="icon-button" title="Личный кабинет">
+                    <img alt="Профиль" src="Media/icon1.png" />
+                </a>
+                <a href="Page/fav.php" class="icon-button" title="Избранное">
+                    <img alt="Избранное" src="Media/icon2.png" />
+                </a>
+                <a href="Page/busket.php" class="icon-button" title="Корзина">
+                    <img alt="Корзина" src="Media/icon3.png" />
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <?php
+                        $userId = $_SESSION['user_id'];
+                        $stmt = $conn->prepare("SELECT SUM(quantity) as total FROM Cart WHERE idUser = ?");
+                        $stmt->execute([$userId]);
+                        $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                        if ($total > 0):
+                        ?>
+                            <span class="cart-count"><?php echo $total; ?></span>
+                        <?php endif; ?>
                     <?php endif; ?>
-                <?php endif; ?>
-            </a>
+                </a>
+            </div>
         </div>
     </header>
-
-    <!-- Navigation -->
-    <nav class="nav">
-        <ul>
-            <li><a href="index.php" class="<?php echo !$selectedCategory ? 'active' : ''; ?>">Все</a></li>
-            <?php foreach ($categories as $category): ?>
-                <li>
-                    <a href="index.php?category=<?php echo $category['idCategory']; ?>" 
-                       class="<?php echo $selectedCategory == $category['idCategory'] ? 'active' : ''; ?>">
-                        <?php echo htmlspecialchars($category['nameCategory']); ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </nav>
 
     <!-- Slider -->
     <div class="slider-container">
@@ -329,39 +322,47 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-logo">
-            <img src="Media/logo.png" alt="логотип"/>
-        </div>
         <div class="footer-content">
-            <div class="footer-section">
-                <h4>Страницы</h4>
-                <ul>
-                    <li><a href="/">Главная</a></li>
-                    <li><a href="Page/catalog.php">Каталог</a></li>
-                    <li><a href="Page/busket.php">Корзина</a></li>
-                    <li><a href="Page/fav.php">Избранное</a></li>
-                    <li><a href="Page/personal.php">Профиль</a></li>
-                    <li><a href="Page/delivery.php">Доставка</a></li>
-                </ul>
+            <div class="footer-logo">
+                <a href="index.php">
+                    <img src="Media/logo.png" alt="DiceDream" />
+                </a>
             </div>
-            <div class="footer-section">
-                <h4>Услуги</h4>
-                <ul>
-                    <li><a href="Page/delivery.php">Доставка</a></li>
-                    <li><a href="Page/support.php">Служба поддержки</a></li>
-                </ul>
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="index.php">Главная</a></li>
+                        <li><a href="Page/catalog.php">Каталог</a></li>
+                        <li><a href="Page/busket.php">Корзина</a></li>
+                        <li><a href="Page/fav.php">Избранное</a></li>
+                        <li><a href="Page/personal.php">Личный кабинет</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Покупателям</h4>
+                    <ul>
+                        <li><a href="#">Доставка и оплата</a></li>
+                        <li><a href="#">Возврат товара</a></li>
+                        <li><a href="#">Бонусная программа</a></li>
+                        <li><a href="#">Подарочные сертификаты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#">О компании</a></li>
+                        <li><a href="#">Контакты</a></li>
+                        <li><a href="#">Условия использования</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>Документация</h4>
-                <ul>
-                    <li><a href="Page/delivery-terms.php">Условия доставки</a></li>
-                    <li><a href="Page/storage-terms.php">Условия хранения</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-qr">
-            <div class="qr-code">
-                <img src="Media/qr.png" alt="QR Код"/>
+            <div class="footer-qr">
+                <div class="qr-code">
+                    <img src="Media/qr-code.png" alt="QR-код для скачивания приложения" />
+                    <p class="qr-text">Скачайте наше приложение</p>
+                </div>
             </div>
         </div>
     </footer>

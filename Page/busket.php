@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $userId = $_SESSION['user_id'];
     $stmt = $conn->prepare("
-        SELECT c.*, i.ItemName, i.Price, i.img 
+        SELECT c.*, i.ItemName, i.Price, i.img, i.Genre, i.Count 
         FROM Cart c 
         JOIN Item i ON c.idItem = i.idItem 
         WHERE c.idUser = ?
@@ -35,46 +35,52 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корзина</title>
+    <title>Корзина - DiceDream</title>
     <link rel="stylesheet" href="../Css/style.css">
+    <link rel="stylesheet" href="../Css/catalog.css">
 </head>
 <body>
-
-<div class="App">
+    <!-- Header -->
     <header class="header">
-        <a href="../index.php">
-            <img src="../Media/logo.png" alt="Логотип" class="logo"/>
-        </a>
-        <input class="search-input" placeholder="Название товара" type="text" />
-        <div class="button-container">
-            <a href="personal.php" class="icon-button">
-                <img alt="user" src="../Media/user-icon.png" />
+        <div class="header-content">
+            <a href="../index.php" class="logo-link">
+                <img src="../Media/logo.png" alt="Логотип" class="logo"/>
             </a>
-            <a href="fav.php" class="icon-button">
-                <img alt="love" src="../Media/love-icon.png" />
-            </a>
-            <a href="busket.php" class="icon-button">
-                <img alt="store" src="../Media/store-icon.png" />
-            </a>
+            <form action="catalog.php" method="GET" class="search-form">
+                <div class="search-wrapper">
+                    <input type="text" name="search" class="search-input" 
+                           placeholder="Поиск настольных игр..." />
+                    <button type="submit" class="search-button">
+                        <img src="../Media/search-icon.png" alt="Поиск" class="search-icon">
+                    </button>
+                </div>
+            </form>
+            <div class="header-actions">
+                <a href="personal.php" class="icon-button" title="Личный кабинет">
+                    <img alt="Профиль" src="../Media/icon1.png" />
+                </a>
+                <a href="fav.php" class="icon-button" title="Избранное">
+                    <img alt="Избранное" src="../Media/icon2.png" />
+                </a>
+                <a href="busket.php" class="icon-button" title="Корзина">
+                    <img alt="Корзина" src="../Media/icon3.png" />
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <?php
+                        $stmt = $conn->prepare("SELECT SUM(quantity) as total FROM Cart WHERE idUser = ?");
+                        $stmt->execute([$userId]);
+                        $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+                        if ($total > 0):
+                        ?>
+                            <span class="cart-count"><?php echo $total; ?></span>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </a>
+            </div>
         </div>
     </header>
-    <nav class="nav">
-        <ul>
-            <li><a href="#veterinary">Ветеринарные</a></li>
-            <li><a href="#adults">Для взрослых</a></li>
-            <li><a href="#family">Для всей семьи</a></li>
-            <li><a href="#children">Для детей</a></li>
-            <li><a href="#classic">Классические</a></li>
-            <li><a href="#plans">Планы</a></li>
-            <li><a href="#strategic">Стратегические</a></li>
-            <li><a href="#sales">Хаты продаж</a></li>
-        </ul>
-    </nav>
-    <div class="basket-container">
-
 
     <div class="container">
-        <h1>Корзина</h1>
+        <h1 class="page-title">Корзина</h1>
         
         <?php if (isset($error)): ?>
             <div class="error-message"><?php echo $error; ?></div>
@@ -82,18 +88,24 @@ try {
 
         <?php if (empty($cartItems)): ?>
             <div class="empty-cart">
-                <p>Ваша корзина пуста</p>
-                <a href="../index.php" class="btn">Перейти к покупкам</a>
+                <img src="../Media/empty-cart.png" alt="Корзина пуста" class="empty-icon">
+                <h2>Ваша корзина пуста</h2>
+                <p>Добавьте товары в корзину, чтобы оформить заказ</p>
+                <a href="catalog.php" class="primary-button">Перейти в каталог</a>
             </div>
         <?php else: ?>
             <div class="cart-items">
                 <?php foreach ($cartItems as $item): ?>
                     <div class="cart-item" data-item-id="<?php echo $item['idItem']; ?>">
-                        <img src="data:image/jpeg;base64,<?php echo base64_encode($item['img']); ?>" 
+                        <img src="../Media/<?php echo htmlspecialchars($item['ItemName']); ?>.png" 
                              alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
                              class="cart-item-image">
                         <div class="cart-item-details">
                             <h3><?php echo htmlspecialchars($item['ItemName']); ?></h3>
+                            <div class="cart-item-meta">
+                                <span class="cart-item-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                <span class="cart-item-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                            </div>
                             <p class="cart-item-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
                             <div class="quantity-controls">
                                 <button class="quantity-btn minus" data-action="decrease">-</button>
@@ -119,46 +131,51 @@ try {
     </div>
 
     <!-- Footer -->
-<footer class="footer">
-    <div class="footer-logo">
-        <img src="..\Media\logo.png" alt="логотип"/>
-    </div>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>Страницы</h4>
-            <ul>
-                <li><a href="/">Главная</a></li>
-                <li><a href="/catalog">Каталог</a></li>
-                <li><a href="/basket">Корзина</a></li>
-                <li><a href="/favourites">Избранное</a></li>
-                <li><a href="/personal">Профиль</a></li>
-                <li><a href="/delivery">Доставка</a></li>
-                <li><a href="/purchases">Покупки</a></li>
-            </ul>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../index.php">
+                    <img src="../Media/logo.png" alt="DiceDream" />
+                </a>
+            </div>
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="../index.php">Главная</a></li>
+                        <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="busket.php">Корзина</a></li>
+                        <li><a href="fav.php">Избранное</a></li>
+                        <li><a href="personal.php">Личный кабинет</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Покупателям</h4>
+                    <ul>
+                        <li><a href="#">Доставка и оплата</a></li>
+                        <li><a href="#">Возврат товара</a></li>
+                        <li><a href="#">Бонусная программа</a></li>
+                        <li><a href="#">Подарочные сертификаты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#">О компании</a></li>
+                        <li><a href="#">Контакты</a></li>
+                        <li><a href="#">Условия использования</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-qr">
+                <div class="qr-code">
+                    <img src="../Media/qr-code.png" alt="QR-код для скачивания приложения" />
+                    <p class="qr-text">Скачайте наше приложение</p>
+                </div>
+            </div>
         </div>
-        <div class="footer-section">
-            <h4>Услуги</h4>
-            <ul>
-                <li><a href="/delivery">Доставка</a></li>
-                <li><a href="/support">Служба поддержки</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h4>Документация</h4>
-            <ul>
-                <li><a href="/delivery-terms">Условия доставки</a></li>
-                <li><a href="/storage-terms">Условия хранения</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-qr">
-        <div class="qr-code">
-            <img src="..\Media\qr.png" alt="QR Код"/>
-        </div>
-    </div>
-</footer>
-</div>
-<script src="script.js"></script>
+    </footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -211,36 +228,67 @@ try {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload(); // Перезагружаем страницу для обновления данных
+                    location.reload();
                 } else {
-                    showNotification(data.message, 'error');
+                    showNotification(data.message || 'Произошла ошибка', 'error');
                 }
             })
             .catch(error => {
+                console.error('Ошибка:', error);
                 showNotification('Произошла ошибка при обновлении корзины', 'error');
             });
         }
 
         // Функция удаления товара
         function removeItem(itemId) {
-            fetch('remove_from_cart.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `item_id=${itemId}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload(); // Перезагружаем страницу для обновления данных
-                } else {
-                    showNotification(data.message, 'error');
-                }
-            })
-            .catch(error => {
-                showNotification('Произошла ошибка при удалении товара', 'error');
-            });
+            if (confirm('Вы уверены, что хотите удалить этот товар из корзины?')) {
+                fetch('remove_from_cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `item_id=${itemId}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const cartItem = document.querySelector(`.cart-item[data-item-id="${itemId}"]`);
+                        cartItem.remove();
+                        
+                        // Проверяем, остались ли товары в корзине
+                        if (document.querySelectorAll('.cart-item').length === 0) {
+                            document.querySelector('.container').innerHTML = `
+                                <div class="empty-cart">
+                                    <img src="../Media/empty-cart.png" alt="Корзина пуста" class="empty-icon">
+                                    <h2>Ваша корзина пуста</h2>
+                                    <p>Добавьте товары в корзину, чтобы оформить заказ</p>
+                                    <a href="catalog.php" class="primary-button">Перейти в каталог</a>
+                                </div>
+                            `;
+                        } else {
+                            // Обновляем страницу для пересчета итоговой суммы
+                            location.reload();
+                        }
+                    } else {
+                        showNotification(data.message || 'Произошла ошибка', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    showNotification('Произошла ошибка при удалении товара', 'error');
+                });
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
     });
     </script>

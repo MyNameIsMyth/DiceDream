@@ -14,16 +14,16 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Обновляем количество товаров в корзине
+                    
                     const cartCount = document.querySelector('.cart-count');
                     if (cartCount) {
                         cartCount.textContent = data.total;
                     }
                     
-                    // Показываем уведомление
+                    
                     showNotification(data.message, 'success');
                 } else {
-                    // Если пользователь не авторизован, перенаправляем на страницу входа
+                    
                     if (data.message === 'Необходимо войти в систему') {
                         window.location.href = 'Page/vhod.php';
                     } else {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Функция для показа уведомлений
+
 function showNotification(message, type) {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -46,7 +46,7 @@ function showNotification(message, type) {
     
     document.body.appendChild(notification);
     
-    // Удаляем уведомление через 3 секунды
+    
     setTimeout(() => {
         notification.remove();
     }, 3000);
