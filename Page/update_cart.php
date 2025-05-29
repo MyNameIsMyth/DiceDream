@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id']) && isset($_POST['quantity'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idItem']) && isset($_POST['quantity'])) {
     $userId = $_SESSION['user_id'];
-    $itemId = $_POST['item_id'];
+    $itemId = $_POST['idItem'];
     $quantity = (int)$_POST['quantity'];
     
     // Проверяем валидность количества

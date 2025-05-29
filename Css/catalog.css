@@ -211,11 +211,11 @@ body {
 
 /* Product card */
 .product-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
+    background: #CACCC1;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative;
+    transition: transform 0.2s;
     display: flex;
     flex-direction: column;
 }
@@ -231,6 +231,11 @@ body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    cursor: pointer;
+}
+
+.product-link:hover {
+    text-decoration: none;
 }
 
 .product-image-container {

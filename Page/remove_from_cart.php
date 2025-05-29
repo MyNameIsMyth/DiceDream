@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idItem'])) {
     $userId = $_SESSION['user_id'];
-    $itemId = $_POST['item_id'];
+    $itemId = $_POST['idItem'];
     
     try {
         $stmt = $conn->prepare("DELETE FROM Cart WHERE idUser = ? AND idItem = ?");

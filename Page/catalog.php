@@ -1,37 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
-
-// Функция для получения случайного изображения из папки Media
-function getProductImage($itemName) {
-    $imagePath = "../Media/" . $itemName . ".png";
-    
-    // Список доступных изображений
-    $availableImages = [
-        'Бункер.png',
-        'Глумхевен.png',
-        'Дюна.png',
-        'Зомбоцид.png',
-        'Книга.png',
-        'Котята.png',
-        'Мемы.png',
-        'Осворн.png',
-        'Пёсики.png',
-        'Свинтус.png',
-        'Уно.png',
-        'Эверделл.png',
-        'Аркхэм.png',
-        '500 карт.png'
-    ];
-
-    // Проверяем существует ли файл
-    if (file_exists($imagePath)) {
-        return $itemName . ".png";
-    } else {
-        // Если файл не существует, выбираем случайное изображение
-        return $availableImages[array_rand($availableImages)];
-    }
-}
+require_once 'utils.php';
 
 // Параметры сортировки и фильтрации
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
@@ -229,8 +199,8 @@ try {
 
         .favorite-button {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 10px;
+            right: 10px;
             background: white;
             border: none;
             border-radius: 50%;
@@ -241,7 +211,7 @@ try {
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 2;
+            z-index: 10;
             transition: all 0.2s ease;
             padding: 0;
         }
@@ -251,12 +221,20 @@ try {
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
-        .favorite-button img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-            display: block;
-            margin: auto;
+        .favorite-button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .favorite-button.active {
+            background: #fff0f0;
+        }
+
+        .favorite-icon {
+            font-size: 18px;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
         }
 
         .new-product-content {
@@ -304,7 +282,7 @@ try {
             font-weight: 600;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -312,8 +290,30 @@ try {
             margin-top: auto;
         }
 
-        .new-basket-button:hover {
+        .new-basket-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .new-basket-button.error {
+            background: #dc3545;
+            color: white;
+        }
+
+        .new-basket-button.added {
+            background: #28a745;
+        }
+
+        .new-basket-button:hover:not(:disabled) {
             background: #0056b3;
+        }
+
+        .new-basket-button.error:hover:not(:disabled) {
+            background: #c82333;
+        }
+
+        .new-basket-button.added:hover:not(:disabled) {
+            background: #218838;
         }
 
         .new-basket-button img {
@@ -487,31 +487,36 @@ try {
                 <?php else: ?>
                     <?php foreach ($items as $item): ?>
                         <div class="product-card">
-                            <div class="product-image-container">
-                                <img src="../Media/<?php echo getProductImage($item['ItemName']); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
-                                     class="product-image">
-                                <?php if (isset($_SESSION['user_id'])): ?>
-                                    <button class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
-                                            onclick="toggleFavorite(<?php echo $item['idItem']; ?>, this)">
-                                        <?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                            <div class="product-info">
-                                <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
-                                <div class="product-meta">
-                                    <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
-                                    <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                            <a href="product.php?id=<?php echo $item['idItem']; ?>" class="product-link">
+                                <div class="product-image-container">
+                                    <img src="<?php echo getProductImage($item['ItemName'], $item['img_path']); ?>" 
+                                         alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                         onerror="this.src='../Media/logo.png'"
+                                         class="product-image">
+                                    <?php if (isset($_SESSION['user_id'])): ?>
+                                        <button type="button" 
+                                                class="favorite-button <?php echo in_array($item['idItem'], $favorites) ? 'active' : ''; ?>"
+                                                data-item-id="<?php echo $item['idItem']; ?>"
+                                                onclick="toggleFavorite(this)">
+                                            <span class="favorite-icon"><?php echo in_array($item['idItem'], $favorites) ? '❤️' : '🤍'; ?></span>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="product-details">
-                                    <span class="product-time"><?php echo htmlspecialchars($item['GameTime']); ?> мин</span>
-                                    <span class="product-age"><?php echo htmlspecialchars($item['Limitation']); ?>+</span>
+                                <div class="product-info">
+                                    <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
+                                    <div class="product-meta">
+                                        <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                        <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                                    </div>
+                                    <div class="product-details">
+                                        <span class="product-time"><?php echo htmlspecialchars($item['GameTime']); ?> мин</span>
+                                        <span class="product-age"><?php echo htmlspecialchars($item['Limitation']); ?>+</span>
+                                    </div>
+                                    <div class="product-price">
+                                        <span class="price"><?php echo number_format($item['Price'], 0, ',', ' '); ?> ₽</span>
+                                    </div>
                                 </div>
-                                <div class="product-price">
-                                    <span class="price"><?php echo number_format($item['Price'], 0, ',', ' '); ?> ₽</span>
-                                </div>
-                            </div>
+                            </a>
                             <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
                                 В корзину
                             </button>
@@ -579,37 +584,53 @@ try {
         window.location.href = url.toString();
     }
 
-    function toggleFavorite(itemId, button) {
-        <?php if (!isset($_SESSION['user_id'])): ?>
-            window.location.href = 'vhod.php';
-            return;
-        <?php endif; ?>
-
+    function toggleFavorite(button) {
+        const itemId = button.getAttribute('data-item-id');
+        console.log('Toggling favorite for item:', itemId);
+        
+        // Визуальная обратная связь о начале процесса
+        button.disabled = true;
+        
         fetch('toggle_favorite.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: 'idItem=' + itemId
+            body: 'idItem=' + itemId,
+            credentials: 'same-origin'
         })
-        .then(response => response.json())
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Server response:', data);
+            button.disabled = false;
+            
             if (data.success) {
+                const icon = button.querySelector('.favorite-icon');
                 if (data.isFavorite) {
-                    button.textContent = '❤️';
+                    icon.textContent = '❤️';
                     button.classList.add('active');
+                    console.log('Added to favorites');
                 } else {
-                    button.textContent = '🤍';
+                    icon.textContent = '🤍';
                     button.classList.remove('active');
+                    console.log('Removed from favorites');
                 }
             } else {
-                alert(data.message || 'Произошла ошибка');
+                console.error('Server error:', data.message);
+                if (data.message === 'Необходимо авторизоваться') {
+                    window.location.href = 'vhod.php';
+                } else {
+                    alert(data.message || 'Произошла ошибка при обновлении избранного');
+                }
             }
         })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при обновлении избранного');
-        });
+        
     }
 
     function addToCart(itemId, button) {
@@ -617,6 +638,10 @@ try {
             window.location.href = 'vhod.php';
             return;
         <?php endif; ?>
+
+        // Disable button and show loading state
+        button.disabled = true;
+        button.textContent = 'Добавление...';
 
         fetch('add_to_cart.php', {
             method: 'POST',
@@ -631,7 +656,7 @@ try {
                 button.classList.add('added');
                 button.textContent = 'В корзине';
                 
-                // Обновляем счетчик в корзине
+                // Update cart counter
                 const cartCount = document.querySelector('.cart-count');
                 if (cartCount) {
                     let count = parseInt(cartCount.textContent || '0');
@@ -645,17 +670,42 @@ try {
                     cartIcon.appendChild(newCount);
                 }
 
+                // Reset button state after delay
                 setTimeout(() => {
                     button.classList.remove('added');
+                    button.disabled = false;
                     button.textContent = 'В корзину';
                 }, 2000);
             } else {
-                alert(data.message || 'Произошла ошибка');
+                // Handle error without alert
+                button.classList.add('error');
+                button.textContent = data.message;
+                
+                // If redirect is specified, redirect user
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+
+                // Reset button state after delay
+                setTimeout(() => {
+                    button.classList.remove('error');
+                    button.disabled = false;
+                    button.textContent = 'В корзину';
+                }, 2000);
             }
         })
         .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при добавлении в корзину');
+            // Handle network error without alert
+            button.classList.add('error');
+            
+            
+            // Reset button state after delay
+            setTimeout(() => {
+                button.classList.remove('error');
+                button.disabled = false;
+                button.textContent = 'В корзину';
+            }, 2000);
         });
     }
 </script>

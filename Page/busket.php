@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'db_connect.php';
+require_once 'utils.php';
 
 // Проверяем авторизацию
 if (!isset($_SESSION['user_id'])) {
@@ -12,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $userId = $_SESSION['user_id'];
     $stmt = $conn->prepare("
-        SELECT c.*, i.ItemName, i.Price, i.img, i.Genre, i.Count 
+        SELECT c.*, i.ItemName, i.Price, i.img_path, i.Genre, i.Count 
         FROM Cart c 
         JOIN Item i ON c.idItem = i.idItem 
         WHERE c.idUser = ?
@@ -97,8 +98,9 @@ try {
             <div class="cart-items">
                 <?php foreach ($cartItems as $item): ?>
                     <div class="cart-item" data-item-id="<?php echo $item['idItem']; ?>">
-                        <img src="../Media/<?php echo htmlspecialchars($item['ItemName']); ?>.png" 
+                        <img src="<?php echo getProductImage($item['ItemName'], $item['img_path']); ?>" 
                              alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                             onerror="this.src='../Media/logo.png'"
                              class="cart-item-image">
                         <div class="cart-item-details">
                             <h3><?php echo htmlspecialchars($item['ItemName']); ?></h3>
@@ -223,7 +225,7 @@ try {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `item_id=${itemId}&quantity=${quantity}`
+                body: `idItem=${itemId}&quantity=${quantity}`
             })
             .then(response => response.json())
             .then(data => {
@@ -247,28 +249,12 @@ try {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: `item_id=${itemId}`
+                    body: `idItem=${itemId}`
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        const cartItem = document.querySelector(`.cart-item[data-item-id="${itemId}"]`);
-                        cartItem.remove();
-                        
-                        // Проверяем, остались ли товары в корзине
-                        if (document.querySelectorAll('.cart-item').length === 0) {
-                            document.querySelector('.container').innerHTML = `
-                                <div class="empty-cart">
-                                    <img src="../Media/empty-cart.png" alt="Корзина пуста" class="empty-icon">
-                                    <h2>Ваша корзина пуста</h2>
-                                    <p>Добавьте товары в корзину, чтобы оформить заказ</p>
-                                    <a href="catalog.php" class="primary-button">Перейти в каталог</a>
-                                </div>
-                            `;
-                        } else {
-                            // Обновляем страницу для пересчета итоговой суммы
-                            location.reload();
-                        }
+                        location.reload();
                     } else {
                         showNotification(data.message || 'Произошла ошибка', 'error');
                     }

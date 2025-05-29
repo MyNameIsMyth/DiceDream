@@ -1,9 +1,26 @@
 <?php
+session_start();
 require_once 'Page/db_connect.php';
 
-// Функция для получения изображения в base64
-function getBase64Image($blobData) {
-    return base64_encode($blobData);
+// Функция для получения корректного пути к изображению
+function getProductImage($imgPath, $itemName) {
+    if (!empty($imgPath)) {
+        // Получаем только имя файла из полного пути
+        $fileName = basename($imgPath);
+        // Проверяем существование файла в локальной директории Media
+        if (file_exists('Media/' . $fileName)) {
+            return $fileName;
+        }
+    }
+    
+    // Если путь пустой или файл не существует, пробуем найти по имени товара
+    $defaultFileName = mb_strtolower(str_replace(' ', '_', $itemName)) . '.jpg';
+    if (file_exists('Media/' . $defaultFileName)) {
+        return $defaultFileName;
+    }
+    
+    // Если ничего не найдено, возвращаем изображение по умолчанию
+    return 'default.jpg';
 }
 
 // Получаем категории
@@ -23,7 +40,7 @@ $whereClause = $selectedCategory ? " WHERE c.idCategory = :category" : "";
 // Получаем последние добавленные товары для секции "Новинки"
 try {
     $stmt = $conn->prepare("
-        SELECT i.*, c.nameCategory, c.idCategory as categoryId
+        SELECT i.*, c.nameCategory, c.idCategory as categoryId, i.img_path
         FROM Item i 
         INNER JOIN Category c ON i.idCategory = c.idCategory" 
         . $whereClause . 
@@ -40,7 +57,7 @@ try {
 
 // Топ продаж
 $stmt = $conn->prepare("
-    SELECT i.*, c.nameCategory, c.idCategory as categoryId
+    SELECT i.*, c.nameCategory, c.idCategory as categoryId, i.img_path
     FROM Item i 
     INNER JOIN Category c ON i.idCategory = c.idCategory"
     . $whereClause . 
@@ -54,7 +71,7 @@ $topItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Случайные товары для секции "Специально для вас"
 $stmt = $conn->prepare("
-    SELECT i.*, c.nameCategory, c.idCategory as categoryId
+    SELECT i.*, c.nameCategory, c.idCategory as categoryId, i.img_path
     FROM Item i 
     INNER JOIN Category c ON i.idCategory = c.idCategory"
     . $whereClause . 
@@ -233,13 +250,40 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="products-grid">
                 <?php foreach ($newItems as $item): ?>
                     <div class="product-card">
-                        <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?></div>
-                        <img src="data:image/jpeg;base64,<?php echo getBase64Image($item['img']); ?>" 
-                             alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
-                             class="product-image">
-                        <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
-                        <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
-                        <button class="add-to-cart" data-item-id="<?php echo $item['idItem']; ?>">В корзину</button>
+                        <a href="Page/product.php?id=<?php echo $item['idItem']; ?>" class="product-link">
+                            <div class="product-image-container">
+                                <?php 
+                                $imagePath = getProductImage($item['img_path'], $item['ItemName']);
+                                $imageUrl = htmlspecialchars('Media/' . $imagePath);
+                                ?>
+                                <img src="<?php echo $imageUrl; ?>" 
+                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                     class="product-image"
+                                     onerror="this.onerror=null; this.src='Media/default.jpg';">
+                                <?php if (isset($item['Limitation'])): ?>
+                                    <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
+                                <div class="product-meta">
+                                    <?php if (isset($item['Genre'])): ?>
+                                        <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if (isset($item['Count'])): ?>
+                                        <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
+                            </div>
+                        </a>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                                В корзину
+                            </button>
+                        <?php else: ?>
+                            <a href="Page/vhod.php" class="add-to-cart-button">Войти для покупки</a>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -249,18 +293,30 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <section class="section">
             <div class="section-header">
                 <h2>Топ продаж</h2>
-                <a href="#" class="more-link">Ещё <img src="Media/arrow.png" alt="Стрелка" class="arrow-icon"/></a>
+                <a href="Page/catalog.php" class="more-link">Ещё <img src="Media/arrow.png" alt="Стрелка" class="arrow-icon"/></a>
             </div>
             <div class="products-grid">
                 <?php foreach ($topItems as $item): ?>
                     <div class="product-card">
-                        <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?></div>
-                        <img src="data:image/jpeg;base64,<?php echo getBase64Image($item['img']); ?>" 
-                             alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
-                             class="product-image">
-                        <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
-                        <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
-                        <button class="add-to-cart" data-item-id="<?php echo $item['idItem']; ?>">В корзину</button>
+                        <a href="Page/product.php?id=<?php echo $item['idItem']; ?>" class="product-link">
+                            <div class="product-image-container">
+                                <img src="Media/<?php echo getProductImage($item['img_path'], $item['ItemName']); ?>" 
+                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                     class="product-image">
+                                <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
+                                <div class="product-meta">
+                                    <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                    <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                                </div>
+                                <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
+                            </div>
+                        </a>
+                        <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                            В корзину
+                        </button>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -270,18 +326,30 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <section class="section">
             <div class="section-header">
                 <h2>Специально для вас</h2>
-                <a href="#" class="more-link">Ещё <img src="Media/arrow.png" alt="Стрелка" class="arrow-icon"/></a>
+                <a href="Page/catalog.php" class="more-link">Ещё <img src="Media/arrow.png" alt="Стрелка" class="arrow-icon"/></a>
             </div>
             <div class="products-grid">
                 <?php foreach ($specialItems as $item): ?>
                     <div class="product-card">
-                        <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?></div>
-                        <img src="data:image/jpeg;base64,<?php echo getBase64Image($item['img']); ?>" 
-                             alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
-                             class="product-image">
-                        <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
-                        <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
-                        <button class="add-to-cart" data-item-id="<?php echo $item['idItem']; ?>">В корзину</button>
+                        <a href="Page/product.php?id=<?php echo $item['idItem']; ?>" class="product-link">
+                            <div class="product-image-container">
+                                <img src="Media/<?php echo getProductImage($item['img_path'], $item['ItemName']); ?>" 
+                                     alt="<?php echo htmlspecialchars($item['ItemName']); ?>" 
+                                     class="product-image">
+                                <div class="age-limit"><?php echo htmlspecialchars($item['Limitation']); ?>+</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-title"><?php echo htmlspecialchars($item['ItemName']); ?></h3>
+                                <div class="product-meta">
+                                    <span class="product-genre"><?php echo htmlspecialchars($item['Genre']); ?></span>
+                                    <span class="product-players"><?php echo htmlspecialchars($item['Count']); ?> игроков</span>
+                                </div>
+                                <p class="product-price"><?php echo number_format($item['Price'], 0, '', ' '); ?>₽</p>
+                            </div>
+                        </a>
+                        <button class="add-to-cart-button" onclick="addToCart(<?php echo $item['idItem']; ?>, this)">
+                            В корзину
+                        </button>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -533,6 +601,78 @@ $specialItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 }
             });
         });
+    </script>
+
+    <script>
+    function addToCart(itemId, button) {
+        // Disable button and show loading state
+        button.disabled = true;
+        button.textContent = 'Добавление...';
+
+        fetch('Page/add_to_cart.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'idItem=' + itemId,
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                button.classList.add('added');
+                button.textContent = 'В корзине';
+                
+                // Update cart counter
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount) {
+                    let count = parseInt(cartCount.textContent || '0');
+                    cartCount.textContent = count + 1;
+                    cartCount.style.display = 'block';
+                } else {
+                    const cartIcon = document.querySelector('a[href="Page/busket.php"]');
+                    const newCount = document.createElement('span');
+                    newCount.className = 'cart-count';
+                    newCount.textContent = '1';
+                    cartIcon.appendChild(newCount);
+                }
+
+                // Reset button state after delay
+                setTimeout(() => {
+                    button.classList.remove('added');
+                    button.disabled = false;
+                    button.textContent = 'В корзину';
+                }, 2000);
+            } else {
+                button.classList.add('error');
+                button.textContent = data.message || 'Ошибка';
+                
+                // Reset button state after delay
+                setTimeout(() => {
+                    button.classList.remove('error');
+                    button.disabled = false;
+                    button.textContent = 'В корзину';
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            button.classList.add('error');
+            button.textContent = 'Ошибка';
+            
+            // Reset button state after delay
+            setTimeout(() => {
+                button.classList.remove('error');
+                button.disabled = false;
+                button.textContent = 'В корзину';
+            }, 2000);
+        });
+    }
     </script>
 </body>
 </html>

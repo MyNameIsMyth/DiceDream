@@ -2,6 +2,9 @@
 session_start();
 require_once 'db_connect.php';
 
+$error = '';
+$pageTitle = 'Вход';
+
 // Проверяем, если пользователь уже вошел в систему
 if (isset($_SESSION['user_id'])) {
     header("Location: personal.php");
@@ -27,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['roles'] === 'admin') {
                 header("Location: AdminItem.php");
             } else {
-                header("Location: personal.php"); // Changed from catalog.php to personal.php
+                header("Location: personal.php");
             }
             exit();
         } else {
@@ -43,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход</title>
+    <title><?php echo $pageTitle; ?></title>
     <link rel="stylesheet" href="..\Css\vhod.css">
 </head>
 <body>
@@ -58,15 +61,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="success-message"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
             <?php endif; ?>
-            <?php if (isset($error)): ?>
+            <?php if ($error): ?>
                 <div class="error-message"><?php echo $error; ?></div>
             <?php endif; ?>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder="Имя пользователя"/>
+                    <input type="text" id="username" name="username" placeholder="Имя пользователя" required/>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder="Пароль"/>
+                    <input type="password" id="password" name="password" placeholder="Пароль" required/>
                 </div>
                 <button class="btn" type="submit">Войти</button>
             </form>
